@@ -43,5 +43,4 @@ pathlib>=1.0.1
 lxml>=4.9.3
 chardet>=5.2.0
 pdfplumber>=0.9.0
-textract>=1.6.5
 dateparser>=1.1.8
