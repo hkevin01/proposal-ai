@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import (
     QCheckBox,
     QComboBox,
     QDateEdit,
+    QFileDialog,
     QFormLayout,
     QFrame,
     QGroupBox,
@@ -35,6 +36,27 @@ from PyQt5.QtWidgets import (
 
 from database import DatabaseManager
 from discovery_engine import OpportunityProcessor
+
+# Import the AI proposal components
+try:
+    from ai_proposal_generator import (
+        AIProposalGenerator,
+        ProposalContext,
+        ProposalManager,
+    )
+    from proposal_editor_gui import ProposalEditorWidget, ProposalGenerationWorker
+    AI_AVAILABLE = True
+except ImportError:
+    AI_AVAILABLE = False
+
+# Import enhanced discovery features
+try:
+    from enhanced_gui_tab import EnhancedDiscoveryTab
+    ENHANCED_DISCOVERY_AVAILABLE = True
+except ImportError:
+    ENHANCED_DISCOVERY_AVAILABLE = False
+    print("Warning: Enhanced discovery features not available. Install required packages.")
+    print("Warning: AI proposal generation not available. Install OpenAI and transformers packages.")
 
 
 class ScrapingWorker(QThread):
@@ -212,6 +234,12 @@ class ProposalAIMainWindow(QMainWindow):
         
         # Create tabs
         self.create_discovery_tab()
+        
+        # Add enhanced discovery tab if available
+        if ENHANCED_DISCOVERY_AVAILABLE:
+            self.enhanced_discovery_tab = EnhancedDiscoveryTab(self.db_manager)
+            self.tab_widget.addTab(self.enhanced_discovery_tab, "🚀 Enhanced Discovery")
+        
         self.create_opportunities_tab()
         self.create_proposals_tab()
         self.create_settings_tab()
@@ -339,35 +367,77 @@ class ProposalAIMainWindow(QMainWindow):
         self.tab_widget.addTab(opportunities_widget, "📋 Opportunities")
     
     def create_proposals_tab(self):
-        """Tab for managing proposals"""
-        proposals_widget = QWidget()
-        layout = QVBoxLayout(proposals_widget)
-        
-        # Proposal management panel
-        management_group = QGroupBox("Proposal Management")
-        management_layout = QHBoxLayout()
-        
-        new_proposal_btn = QPushButton("📝 New Proposal")
-        import_proposal_btn = QPushButton("📁 Import Proposal")
-        export_proposals_btn = QPushButton("💾 Export All")
-        
-        management_layout.addWidget(new_proposal_btn)
-        management_layout.addWidget(import_proposal_btn)
-        management_layout.addWidget(export_proposals_btn)
-        management_layout.addStretch()
-        
-        management_group.setLayout(management_layout)
-        layout.addWidget(management_group)
-        
-        # Proposals table
-        self.proposals_table = QTableWidget()
-        self.proposals_table.setColumnCount(5)
-        self.proposals_table.setHorizontalHeaderLabels([
-            "Title", "Opportunity", "Status", "Deadline", "Last Modified"
-        ])
-        layout.addWidget(self.proposals_table)
-        
-        self.tab_widget.addTab(proposals_widget, "📄 Proposals")
+        """Tab for AI-powered proposal creation and management"""
+        if AI_AVAILABLE:
+            # Use the full-featured AI proposal editor
+            self.proposal_editor = ProposalEditorWidget(self.db_manager)
+            self.tab_widget.addTab(self.proposal_editor, "🤖 AI Proposals")
+        else:
+            # Fallback basic proposals interface
+            proposals_widget = QWidget()
+            layout = QVBoxLayout(proposals_widget)
+            
+            # Warning about missing AI features
+            warning_group = QGroupBox("⚠️ AI Features Not Available")
+            warning_layout = QVBoxLayout()
+            warning_label = QLabel(
+                "AI proposal generation requires additional packages.\n"
+                "Install with: pip install openai transformers torch"
+            )
+            warning_label.setStyleSheet("color: #d4822a; font-weight: bold;")
+            warning_layout.addWidget(warning_label)
+            warning_group.setLayout(warning_layout)
+            layout.addWidget(warning_group)
+            
+            # Basic proposal management panel
+            management_group = QGroupBox("Basic Proposal Management")
+            management_layout = QHBoxLayout()
+            
+            new_proposal_btn = QPushButton("📝 New Proposal")
+            import_proposal_btn = QPushButton("📁 Import Proposal")
+            export_proposals_btn = QPushButton("💾 Export All")
+            
+            # Connect to placeholder functions
+            new_proposal_btn.clicked.connect(self.create_basic_proposal)
+            import_proposal_btn.clicked.connect(self.import_proposal)
+            export_proposals_btn.clicked.connect(self.export_proposals)
+            
+            management_layout.addWidget(new_proposal_btn)
+            management_layout.addWidget(import_proposal_btn)
+            management_layout.addWidget(export_proposals_btn)
+            management_layout.addStretch()
+            
+            management_group.setLayout(management_layout)
+            layout.addWidget(management_group)
+            
+            # Basic proposals table
+            self.proposals_table = QTableWidget()
+            self.proposals_table.setColumnCount(5)
+            self.proposals_table.setHorizontalHeaderLabels([
+                "Title", "Opportunity", "Status", "Deadline", "Last Modified"
+            ])
+            layout.addWidget(self.proposals_table)
+            
+            self.tab_widget.addTab(proposals_widget, "📄 Proposals")
+    
+    def create_basic_proposal(self):
+        """Create a basic proposal without AI assistance"""
+        QMessageBox.information(self, "Basic Proposal", 
+                              "Basic proposal creation feature coming soon!\n"
+                              "For AI-powered proposal generation, install the required packages.")
+    
+    def import_proposal(self):
+        """Import an existing proposal"""
+        filename, _ = QFileDialog.getOpenFileName(
+            self, "Import Proposal", "", 
+            "Text Files (*.txt);;Word Documents (*.docx);;All Files (*)"
+        )
+        if filename:
+            QMessageBox.information(self, "Import", f"Would import: {filename}")
+    
+    def export_proposals(self):
+        """Export all proposals"""
+        QMessageBox.information(self, "Export", "Export feature coming soon!")
     
     def create_settings_tab(self):
         """Tab for application settings"""
