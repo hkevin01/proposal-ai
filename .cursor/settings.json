@@ -1,0 +1,42 @@
+{
+  "codingStandards": {
+    "typescript": {
+      "strictMode": true,
+      "noImplicitAny": true,
+      "noNonNullAssertion": true,
+      "noUncheckedIndexedAccess": true,
+      "exactOptionalPropertyTypes": true
+    },
+    "strings": {
+      "useDoubleQuotes": true,
+      "preferTemplateLiterals": true,
+      "avoidConcatenation": true
+    },
+    "comments": {
+      "requireJSDoc": true,
+      "requireInlineComments": true,
+      "documentComplexLogic": true
+    },
+    "errorHandling": {
+      "requireErrorChecking": true,
+      "requireTypeValidation": true,
+      "handleEdgeCases": true
+    },
+    "completeness": {
+      "noPlaceholders": true,
+      "completeImplementations": true,
+      "includeAllImports": true
+    }
+  },
+  "aiAssistance": {
+    "contextWindowWarnings": true,
+    "missingContentRequests": true,
+    "errorCorrection": true,
+    "educationalExplanations": true
+  },
+  "projectGuidelines": {
+    "referenceFile": ".cursor/rules.md",
+    "enforceStandards": true,
+    "documentDeviations": true
+  }
+} 
