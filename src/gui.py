@@ -19,6 +19,7 @@ from PyQt5.QtWidgets import (
     QLabel,
     QLineEdit,
     QListWidget,
+    QListWidgetItem,
     QMainWindow,
     QMenuBar,
     QMessageBox,
@@ -67,29 +68,62 @@ class ScrapingWorker(QThread):
     
     def run(self):
         try:
-            self.progress.emit("Starting opportunity discovery...")
-            # Here you would run the Scrapy spider
-            # For now, simulate with a timer
-            import time
+            from api_integrations import APIIntegrationManager
+            from database import DatabaseManager
+            from enhanced_discovery_engine import EnhancedOpportunityDiscoverer
             
-            steps = [
-                "Initializing scrapers...",
-                "Scraping IAC website...", 
-                "Scraping NASA SBIR...",
-                "Scraping ESA calls...",
-                "Processing data...",
-                "Updating database..."
-            ]
+            self.progress.emit("Starting enhanced discovery...")
             
-            for i, step in enumerate(steps):
-                self.progress.emit(step)
-                time.sleep(1)  # Simulate work
+            # Initialize discovery systems
+            enhanced_discoverer = EnhancedOpportunityDiscoverer()
+            api_manager = APIIntegrationManager()
+            db_manager = DatabaseManager()
+            
+            # Get keywords from GUI (default for now)
+            keywords = ['artificial intelligence', 'machine learning', 'space', 
+                       'aerospace', 'research', 'innovation']
+            
+            all_opportunities = []
+            
+            # Phase 1: API Discovery
+            self.progress.emit("🔍 Discovering from APIs (Grants.gov, NASA, NSF, arXiv)...")
+            try:
+                api_opportunities = api_manager.get_all_api_opportunities(keywords, 15)
+                all_opportunities.extend(api_opportunities)
+                self.progress.emit(f"✅ Found {len(api_opportunities)} opportunities from APIs")
+            except Exception as e:
+                self.progress.emit(f"⚠️ API discovery error: {e}")
+            
+            # Phase 2: Enhanced Web Discovery
+            self.progress.emit("🔍 Enhanced web scraping from 50+ sources...")
+            try:
+                web_opportunities = enhanced_discoverer.discover_opportunities(max_per_source=10)
+                all_opportunities.extend(web_opportunities)
+                self.progress.emit(f"✅ Found {len(web_opportunities)} opportunities from web scraping")
+            except Exception as e:
+                self.progress.emit(f"⚠️ Web discovery error: {e}")
+            
+            # Phase 3: Save to database
+            self.progress.emit("💾 Saving opportunities to database...")
+            try:
+                saved_count = 0
+                for opp in all_opportunities:
+                    try:
+                        # Save to database
+                        db_manager.save_opportunity(opp)
+                        saved_count += 1
+                    except Exception as e:
+                        print(f"Error saving opportunity: {e}")
+                        continue
                 
-            # Process scraped data
-            processor = OpportunityProcessor()
-            processor.process_unprocessed_opportunities()
+                self.progress.emit(f"✅ Saved {saved_count} opportunities to database")
+                
+            except Exception as e:
+                self.progress.emit(f"⚠️ Database save error: {e}")
             
-            self.finished.emit(len(steps))
+            total_found = len(all_opportunities)
+            self.progress.emit(f"🎯 Discovery complete! Total: {total_found} opportunities")
+            self.finished.emit(total_found)
             
         except Exception as e:
             self.error.emit(str(e))
@@ -501,22 +535,41 @@ class ProposalAIMainWindow(QMainWindow):
     
     def refresh_opportunities_table(self):
         """Refresh the opportunities table with latest data"""
-        events = self.db_manager.get_events()
+        # Get discovered opportunities instead of events
+        opportunities = self.db_manager.get_opportunities(100)
         
-        self.opportunities_table.setRowCount(len(events))
+        self.opportunities_table.setRowCount(len(opportunities))
         
-        for row, event in enumerate(events):
-            # Assuming event structure: (id, name, org_id, date, deadline, desc, url, req, status, created, org_name)
-            self.opportunities_table.setItem(row, 0, QTableWidgetItem(event[1] or ""))  # name
-            self.opportunities_table.setItem(row, 1, QTableWidgetItem(event[10] if len(event) > 10 else "Unknown"))  # org_name
-            self.opportunities_table.setItem(row, 2, QTableWidgetItem(event[4] or ""))  # deadline
-            self.opportunities_table.setItem(row, 3, QTableWidgetItem(event[8] or "Open"))  # status
-            self.opportunities_table.setItem(row, 4, QTableWidgetItem(event[9] or ""))  # created
+        for row, opp in enumerate(opportunities):
+            # opp structure: (id, title, description, deadline, category, funding, type, score, url, created)
+            self.opportunities_table.setItem(row, 0, QTableWidgetItem(opp[1] or ""))  # title
+            self.opportunities_table.setItem(row, 1, QTableWidgetItem(opp[6] or "Unknown"))  # type/organization
+            self.opportunities_table.setItem(row, 2, QTableWidgetItem(opp[3] or ""))  # deadline
+            self.opportunities_table.setItem(row, 3, QTableWidgetItem("Open"))  # status
+            self.opportunities_table.setItem(row, 4, QTableWidgetItem(opp[9] or ""))  # created
             
-            # Store full event data in the first item for later retrieval
+            # Store full opportunity data in the first item for later retrieval
             item = self.opportunities_table.item(row, 0)
             if item:
-                item.setData(Qt.UserRole, event)
+                item.setData(0x0100, opp)  # Qt.UserRole = 0x0100
+    
+    def update_discovery_results(self, opportunities_count: int):
+        """Update the latest discoveries display"""
+        if opportunities_count > 0:
+            # Get the latest opportunities to display
+            latest_opportunities = self.db_manager.get_opportunities(10)
+            
+            # Clear and update the discoveries list
+            self.discovery_results.clear()
+            
+            for opp in latest_opportunities:
+                title = opp[1] or "Untitled Opportunity"
+                source = opp[6] or "Unknown Source"
+                score = opp[7] or 0.0
+                
+                list_item = QListWidgetItem(f"🎯 {title[:60]}...")
+                list_item.setToolTip(f"Source: {source}\\nRelevance Score: {score:.2f}")
+                self.discovery_results.addItem(list_item)
     
     def refresh_organization_filter(self):
         """Refresh organization filter dropdown"""
@@ -603,9 +656,10 @@ class ProposalAIMainWindow(QMainWindow):
         self.discovery_status.setText(f"Discovery completed! Found {count} opportunities.")
         self.status_bar.showMessage("Discovery completed")
         
-        # Refresh data
+        # Refresh data displays
         self.refresh_opportunities_table()
         self.refresh_organization_filter()
+        self.update_discovery_results(count)
         
         # Show notification
         QMessageBox.information(self, "Discovery Complete", 
@@ -627,7 +681,7 @@ class ProposalAIMainWindow(QMainWindow):
         """Show detailed view of selected opportunity"""
         item = self.opportunities_table.item(row, 0)
         if item:
-            event_data = item.data(Qt.UserRole)
+            event_data = item.data(0x0100)  # Qt.UserRole = 0x0100
             if event_data:
                 # Convert tuple to dict for easier access
                 opportunity_dict = {

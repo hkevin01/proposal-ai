@@ -273,13 +273,15 @@ This project aims to leverage AI to help users find, prepare, and submit proposa
 
 ## 🎯 IMMEDIATE NEXT STEPS (Priority Order)
 
-### 1. Test and Refine Enhanced Discovery (Week 1) 🚨
+### 1. Enhanced Discovery & API Integration (Week 1) ✅
 - [x] **Enhanced Discovery Engine** - Created comprehensive system with 50+ sources
 - [x] **Resume/Profile Parsing** - Implemented PDF/Word/text parsing with NLP
 - [x] **Smart Matching System** - Built profile-to-opportunity matching
+- [x] **API Integration Module** - NEW: Real API access to Grants.gov, NASA, NSF, arXiv
+- [x] **Enhanced GUI Integration** - Fixed threading issues and real discovery engine integration
+- [x] **Database Integration** - Added save_opportunity method and opportunity retrieval
 - [ ] **Test Real Sources** - Validate scrapers on actual websites (NASA, ESA, IAC)
 - [ ] **Performance Optimization** - Optimize discovery speed and accuracy
-- [ ] **Error Handling** - Improve robustness and error recovery
 
 ### 2. Complete Phase 3.3: Proposal Editor Interface (Week 1-2) �
 - [x] **AI Proposal Generator** - Already integrated into GUI

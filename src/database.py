@@ -2,7 +2,8 @@
 Database setup and models for Proposal AI
 """
 import sqlite3
-from typing import Optional
+from datetime import datetime
+from typing import Dict, Optional
 
 DATABASE_PATH = "proposal_ai.db"
 
@@ -341,6 +342,80 @@ class DatabaseManager:
         matches = cursor.fetchall()
         conn.close()
         return matches
+    
+    def save_opportunity(self, opportunity: Dict):
+        """Save an opportunity to the database"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        try:
+            # Check if opportunity already exists (by title and source)
+            cursor.execute(
+                "SELECT id FROM scraped_opportunities WHERE title = ? AND source_url = ?",
+                (opportunity.get('title', ''), opportunity.get('url', ''))
+            )
+            existing = cursor.fetchone()
+            
+            if existing:
+                # Update existing opportunity
+                cursor.execute(
+                    """UPDATE scraped_opportunities SET 
+                       description = ?, deadline = ?, category = ?, 
+                       estimated_funding = ?, relevance_score = ?, 
+                       opportunity_type = ?
+                       WHERE id = ?""",
+                    (opportunity.get('description', ''),
+                     opportunity.get('deadline', ''),
+                     opportunity.get('category', ''),
+                     opportunity.get('funding_amount', ''),
+                     opportunity.get('ai_relevance_score', 0.0),
+                     opportunity.get('source', ''),
+                     existing[0])
+                )
+                opportunity_id = existing[0]
+            else:
+                # Insert new opportunity
+                cursor.execute(
+                    """INSERT INTO scraped_opportunities 
+                       (source_url, title, description, deadline, category, 
+                        estimated_funding, relevance_score, opportunity_type) 
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (opportunity.get('url', ''),
+                     opportunity.get('title', ''),
+                     opportunity.get('description', ''),
+                     opportunity.get('deadline', ''),
+                     opportunity.get('category', ''),
+                     opportunity.get('funding_amount', ''),
+                     opportunity.get('ai_relevance_score', 0.0),
+                     opportunity.get('source', ''))
+                )
+                opportunity_id = cursor.lastrowid
+            
+            conn.commit()
+            return opportunity_id
+            
+        except Exception as e:
+            conn.rollback()
+            raise e
+        finally:
+            conn.close()
+    
+    def get_opportunities(self, limit: int = 100):
+        """Get all discovered opportunities"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            """SELECT id, title, description, deadline, category, 
+                      estimated_funding, opportunity_type, relevance_score, 
+                      source_url, created_at 
+               FROM scraped_opportunities 
+               ORDER BY created_at DESC 
+               LIMIT ?""", 
+            (limit,)
+        )
+        opportunities = cursor.fetchall()
+        conn.close()
+        return opportunities
 
 
 if __name__ == "__main__":

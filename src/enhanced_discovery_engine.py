@@ -28,7 +28,14 @@ class EnhancedOpportunityDiscoverer:
     
     def __init__(self):
         self.db_manager = DatabaseManager()
-        self.nlp = spacy.load('en_core_web_sm')
+        
+        # Initialize spaCy with fallback
+        try:
+            self.nlp = spacy.load('en_core_web_sm')
+        except OSError:
+            print("⚠️ Warning: spaCy model 'en_core_web_sm' not found. NLP features will be limited.")
+            self.nlp = None
+            
         self.vectorizer = TfidfVectorizer(max_features=1000, stop_words='english')
         
         # Comprehensive list of opportunity sources
@@ -471,19 +478,26 @@ class EnhancedOpportunityDiscoverer:
 
     def _extract_keywords_from_text(self, text: str) -> List[str]:
         """Extract relevant keywords from text using NLP"""
-        doc = self.nlp(text)
-        
         keywords = []
         
-        # Extract entities
-        for ent in doc.ents:
-            if ent.label_ in ['ORG', 'PRODUCT', 'EVENT', 'WORK_OF_ART']:
-                keywords.append(ent.text.lower())
-        
-        # Extract key phrases (noun phrases)
-        for chunk in doc.noun_chunks:
-            if len(chunk.text.split()) <= 3:  # Limit to 3-word phrases
-                keywords.append(chunk.text.lower())
+        if self.nlp is not None:
+            # Use spaCy for advanced NLP if available
+            doc = self.nlp(text)
+            
+            # Extract entities
+            for ent in doc.ents:
+                if ent.label_ in ['ORG', 'PRODUCT', 'EVENT', 'WORK_OF_ART']:
+                    keywords.append(ent.text.lower())
+            
+            # Extract key phrases (noun phrases)
+            for chunk in doc.noun_chunks:
+                if len(chunk.text.split()) <= 3:  # Limit to 3-word phrases
+                    keywords.append(chunk.text.lower())
+        else:
+            # Fallback to simple keyword extraction
+            import re
+            words = re.findall(r'\b[a-zA-Z]{3,}\b', text.lower())
+            keywords.extend(words[:20])  # Take first 20 words
         
         # Match against our keyword categories
         text_lower = text.lower()
@@ -627,10 +641,13 @@ class EnhancedOpportunityDiscoverer:
         all_texts = [profile_text] + opp_texts
         tfidf_matrix = self.vectorizer.fit_transform(all_texts)
         
-        # Calculate cosine similarities
-        profile_vector = tfidf_matrix[0:1]
-        opp_vectors = tfidf_matrix[1:]
-        similarities = cosine_similarity(profile_vector, opp_vectors)[0]
+        # Calculate cosine similarities using getrow for sparse matrix
+        profile_vector = tfidf_matrix.getrow(0)
+        similarities = []
+        for i in range(1, tfidf_matrix.shape[0]):
+            opp_vector = tfidf_matrix.getrow(i)
+            sim = cosine_similarity(profile_vector, opp_vector)[0][0]
+            similarities.append(sim)
         
         # Add similarity scores to opportunities
         scored_opportunities = []
@@ -686,9 +703,18 @@ class EnhancedOpportunityDiscoverer:
             
             # Calculate text similarity
             opp_text = f"{opp.get('title', '')} {opp.get('description', '')}"
-            all_texts = [proposal_text, opp_text]
-            tfidf_matrix = self.vectorizer.fit_transform(all_texts)
-            similarity = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0]
+            try:
+                all_texts = [proposal_text, opp_text]
+                tfidf_matrix = self.vectorizer.fit_transform(all_texts)
+                similarity = cosine_similarity(
+                    tfidf_matrix.getrow(0), tfidf_matrix.getrow(1)
+                )[0][0]
+            except Exception:
+                # Fallback to simple text overlap
+                proposal_words = set(proposal_text.lower().split())
+                opp_words = set(opp_text.lower().split())
+                overlap = len(proposal_words & opp_words)
+                similarity = overlap / max(len(proposal_words | opp_words), 1)
             
             # Combined score
             match_score = (

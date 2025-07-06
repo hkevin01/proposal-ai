@@ -20,9 +20,34 @@ echo "📚 Installing dependencies..."
 pip install -r requirements.txt
 
 # Download spaCy model if not exists
+echo "🧠 Checking spaCy language model..."
 if ! python -c "import spacy; spacy.load('en_core_web_sm')" 2>/dev/null; then
-    echo "🧠 Downloading spaCy language model..."
+    echo "📥 Downloading spaCy language model..."
     python -m spacy download en_core_web_sm
+    
+    # Verify the download worked
+    if ! python -c "import spacy; spacy.load('en_core_web_sm')" 2>/dev/null; then
+        echo "⚠️ spaCy model download failed. Trying alternative method..."
+        pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
+        
+        # Final verification
+        if ! python -c "import spacy; spacy.load('en_core_web_sm')" 2>/dev/null; then
+            echo "❌ Failed to install spaCy model automatically."
+            echo "Please run one of these commands manually:"
+            echo "   python -m spacy download en_core_web_sm"
+            echo "   OR"
+            echo "   pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl"
+            echo ""
+            echo "Press Enter to continue (app may have limited NLP functionality)..."
+            read
+        else
+            echo "✅ spaCy model successfully installed!"
+        fi
+    else
+        echo "✅ spaCy model successfully installed!"
+    fi
+else
+    echo "✅ spaCy model already available"
 fi
 
 # Create database if not exists
