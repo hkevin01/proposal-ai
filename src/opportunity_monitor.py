@@ -4,13 +4,14 @@ Tracks new opportunities and sends alerts based on user preferences
 """
 
 import json
+import logging
 import sqlite3
+import threading
 import time
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Set
-import threading
+
 import schedule
-import logging
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -55,8 +56,8 @@ class OpportunityMonitor:
         
         try:
             # Import here to avoid circular imports
-            from enhanced_discovery_engine import EnhancedOpportunityDiscoverer
             from api_integrations import APIIntegrationManager
+            from enhanced_discovery_engine import EnhancedOpportunityDiscoverer
             
             discoverer = EnhancedOpportunityDiscoverer()
             api_manager = APIIntegrationManager()

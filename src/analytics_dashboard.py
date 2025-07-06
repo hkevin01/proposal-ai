@@ -5,11 +5,12 @@ Provides insights, statistics, and performance metrics
 
 import json
 import sqlite3
+from collections import Counter, defaultdict
 from datetime import datetime, timedelta
 from typing import Dict, List, Tuple
+
 import matplotlib.pyplot as plt
 import pandas as pd
-from collections import Counter, defaultdict
 
 
 class ProposalAnalytics:
