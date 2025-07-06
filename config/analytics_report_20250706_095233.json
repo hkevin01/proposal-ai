@@ -1,0 +1,119 @@
+{
+  "overview": {
+    "total_opportunities": 1250,
+    "recent_opportunities": 89,
+    "by_source": {
+      "Grants.gov": 450,
+      "NASA NSPIRES": 285,
+      "NSF": 320,
+      "ESA": 125,
+      "ArXiv": 70
+    },
+    "by_category": {
+      "Research Grant": 520,
+      "Innovation Challenge": 285,
+      "SBIR/STTR": 245,
+      "Fellowship": 125,
+      "Other": 75
+    },
+    "top_organizations": {
+      "NASA": 285,
+      "NSF": 320,
+      "DOE": 180,
+      "NIH": 145,
+      "DOD": 95,
+      "ESA": 125,
+      "DARPA": 65,
+      "DOT": 35
+    },
+    "analysis_date": "2025-07-06T09:52:33.981873"
+  },
+  "keywords": {
+    "total_unique_keywords": 450,
+    "top_keywords": {
+      "artificial intelligence": 125,
+      "machine learning": 98,
+      "space technology": 87,
+      "research": 156,
+      "innovation": 134,
+      "data science": 76,
+      "aerospace": 65,
+      "robotics": 54,
+      "satellite": 48,
+      "cybersecurity": 42,
+      "climate": 38,
+      "energy": 45,
+      "healthcare": 52,
+      "autonomous systems": 35,
+      "quantum computing": 28
+    }
+  },
+  "funding": {
+    "total_estimated_funding": "$2.4B",
+    "average_grant_size": "$125K",
+    "funding_ranges": {
+      "$0-$50K": 245,
+      "$50K-$150K": 420,
+      "$150K-$500K": 385,
+      "$500K-$1M": 145,
+      "$1M+": 55
+    },
+    "largest_opportunities": [
+      {
+        "title": "Advanced Space Propulsion",
+        "amount": "$5M",
+        "org": "NASA"
+      },
+      {
+        "title": "AI for Climate Research",
+        "amount": "$3.2M",
+        "org": "NSF"
+      },
+      {
+        "title": "Quantum Computing Initiative",
+        "amount": "$2.8M",
+        "org": "DOE"
+      }
+    ]
+  },
+  "performance": {
+    "total_profiles": 15,
+    "active_users": 12,
+    "proposals_generated": 23,
+    "submissions_tracked": 18,
+    "success_rate": 0.67,
+    "average_match_score": 0.74,
+    "top_performing_categories": [
+      {
+        "category": "Space Technology",
+        "success_rate": 0.72,
+        "count": 8
+      },
+      {
+        "category": "AI Research",
+        "success_rate": 0.68,
+        "count": 6
+      },
+      {
+        "category": "Innovation Challenges",
+        "success_rate": 0.65,
+        "count": 4
+      }
+    ],
+    "monthly_activity": {
+      "opportunities_discovered": 89,
+      "new_matches": 156,
+      "proposals_generated": 8,
+      "deadlines_tracked": 23
+    }
+  },
+  "recommendations": [
+    "Focus on NASA opportunities - highest success rate (72%)",
+    "Expand profile keywords to include 'quantum computing' and 'cybersecurity'",
+    "Set up alerts for opportunities with $150K+ funding",
+    "Consider partnerships for larger ($1M+) opportunities",
+    "Submit applications 2+ weeks before deadlines for better success",
+    "Target 'Innovation Challenge' category for quick wins"
+  ],
+  "generated_at": "2025-07-06T09:52:33.982107"
+}

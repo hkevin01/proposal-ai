@@ -9,8 +9,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 try:
-    from database import setup_database
-    from gui import main as gui_main
+    from .core.database import setup_database
+    from .gui.gui import main as gui_main
 except ImportError as e:
     print(f"Import error: {e}")
     print("Please install required dependencies: pip install -r requirements.txt")

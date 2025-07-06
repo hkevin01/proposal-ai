@@ -52,15 +52,14 @@ fi
 
 # Create database if not exists
 echo "🗄️ Setting up database..."
-cd src
-python -c "from database import setup_database; setup_database()"
+python -c "from src.core.database import setup_database; setup_database()"
 
 # Create sample data if database is empty
 echo "📋 Adding sample data..."
-python sample_data.py
+python -m src.utils.sample_data
 
 # Run the main application
 echo "✨ Launching Proposal AI GUI..."
-python main.py
+python -m src.main
 
 echo "👋 Proposal AI closed."

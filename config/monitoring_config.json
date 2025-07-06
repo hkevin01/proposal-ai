@@ -1,0 +1,75 @@
+{
+  "monitoring": {
+    "enabled": true,
+    "check_interval_minutes": 60,
+    "sources": [
+      {
+        "name": "grants_gov",
+        "enabled": true,
+        "keywords": [
+          "AI",
+          "space",
+          "research"
+        ]
+      },
+      {
+        "name": "nasa_nspires",
+        "enabled": true,
+        "keywords": [
+          "technology",
+          "innovation"
+        ]
+      },
+      {
+        "name": "nsf_funding",
+        "enabled": true,
+        "keywords": [
+          "science",
+          "research"
+        ]
+      },
+      {
+        "name": "esa_opportunities",
+        "enabled": false,
+        "keywords": [
+          "space",
+          "satellite"
+        ]
+      }
+    ]
+  },
+  "alerts": {
+    "new_opportunities": true,
+    "deadline_warnings": {
+      "enabled": true,
+      "days_ahead": 7
+    },
+    "keyword_matches": {
+      "enabled": true,
+      "keywords": [
+        "artificial intelligence",
+        "machine learning",
+        "AI",
+        "space technology",
+        "aerospace",
+        "satellite",
+        "research",
+        "innovation",
+        "SBIR",
+        "STTR"
+      ]
+    }
+  },
+  "notifications": {
+    "email": {
+      "enabled": false,
+      "address": "user@example.com"
+    },
+    "desktop": {
+      "enabled": true
+    },
+    "dashboard": {
+      "enabled": true
+    }
+  }
+}

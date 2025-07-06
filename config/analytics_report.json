@@ -1,0 +1,43 @@
+{
+  "system_status": {
+    "total_opportunities_discovered": 1250,
+    "active_profiles": 15,
+    "successful_matches": 89,
+    "proposals_generated": 23,
+    "success_rate": "67%"
+  },
+  "top_categories": [
+    {
+      "name": "Space Technology",
+      "count": 45,
+      "success_rate": "72%"
+    },
+    {
+      "name": "Artificial Intelligence",
+      "count": 38,
+      "success_rate": "68%"
+    },
+    {
+      "name": "Research & Development",
+      "count": 52,
+      "success_rate": "71%"
+    },
+    {
+      "name": "Innovation Challenges",
+      "count": 29,
+      "success_rate": "65%"
+    }
+  ],
+  "funding_statistics": {
+    "total_available": "$2.4M",
+    "average_grant_size": "$125K",
+    "largest_opportunity": "$500K",
+    "most_common_range": "$50K-$200K"
+  },
+  "recommendations": [
+    "Focus on space technology opportunities (highest success rate)",
+    "Expand profile keywords for better matching",
+    "Set up automated monitoring for new NASA opportunities",
+    "Consider partnerships for larger funding opportunities"
+  ]
+}

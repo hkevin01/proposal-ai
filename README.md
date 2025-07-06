@@ -43,6 +43,14 @@ This project leverages advanced AI to help researchers, startups, and organizati
 
 ## ✨ Key Features
 
+### 💰 **Donor & Foundation Management**
+- **Comprehensive Database**: 100+ philanthropists, foundations, and funding organizations
+- **Smart Matching**: AI-powered donor-opportunity matching based on focus areas and giving patterns
+- **Global Coverage**: Donors from North America, Europe, Asia, Africa, and global organizations
+- **Contact Management**: Websites, emails, application processes, and contact strategies
+- **Portfolio Tracking**: Track donor interests and successful funding patterns
+- **Export Capabilities**: CSV, JSON, and Excel export for external use
+
 ### 🔍 **Enhanced Discovery Engine**
 - **50+ Sources**: NASA, ESA, NSF, NIH, DOE, DARPA, IEEE, Google, Microsoft, Horizon Europe, and more
 - **Intelligent Classification**: 10+ category system (AI/ML, space tech, biotech, energy, etc.)
@@ -79,17 +87,52 @@ This project leverages advanced AI to help researchers, startups, and organizati
 
 ```
 proposal-ai/
-├── src/
-│   ├── enhanced_discovery_engine.py    # 50+ source discovery system
-│   ├── resume_parser.py               # Resume/profile parsing & NLP
-│   ├── enhanced_gui_tab.py           # Enhanced GUI with matching
-│   ├── ai_proposal_generator.py      # AI-powered proposal creation
-│   ├── proposal_editor_gui.py        # Rich proposal editor interface
-│   ├── database.py                   # Extended SQLite schema
-│   └── main.py                       # Application entry point
-├── profiles/                         # User profile storage
-├── docs/                            # Documentation & project plan
-├── test_enhanced_features.py        # Comprehensive test suite
+├── src/                             # Source code (organized by function)
+│   ├── core/                        # Core functionality
+│   │   ├── config.py               # Configuration management
+│   │   ├── database.py             # Database operations
+│   │   └── schema_phase1.py        # Database schemas
+│   ├── gui/                         # User interface components
+│   │   ├── gui.py                  # Main application GUI
+│   │   ├── enhanced_gui_tab.py     # Enhanced discovery interface
+│   │   ├── proposal_editor_gui.py  # Proposal editor
+│   │   └── donor_gui.py            # Donor management interface
+│   ├── discovery/                   # Opportunity discovery
+│   │   ├── discovery_engine.py     # Basic discovery engine
+│   │   ├── enhanced_discovery_engine.py # 50+ source discovery
+│   │   └── api_integrations.py     # External API integrations
+│   ├── donors/                      # Donor management system
+│   │   ├── donor_database.py       # Donor database operations
+│   │   └── donor_enhanced_discovery.py # Donor matching
+│   ├── proposals/                   # Proposal generation
+│   │   ├── ai_proposal_generator.py # AI-powered proposal creation
+│   │   └── resume_parser.py        # Resume/profile parsing & NLP
+│   ├── monitoring/                  # System monitoring
+│   │   ├── opportunity_monitor.py   # Real-time monitoring
+│   │   └── analytics_dashboard.py  # Analytics and reporting
+│   ├── utils/                       # Utilities and helpers
+│   │   └── sample_data.py          # Sample data generation
+│   └── main.py                     # Application entry point
+├── data/                           # Database files and data storage
+├── config/                         # Configuration files
+├── profiles/                       # User profile storage
+├── docs/                          # Documentation & project plan
+├── tests/                         # Test suite
+│   ├── test_enhanced_features.py    # Comprehensive test suite
+│   ├── test_discovery.py           # Discovery engine tests
+│   ├── test_components.py          # Component integration tests
+│   └── quick_test.py               # Quick functionality tests
+├── data/
+│   ├── proposal_ai.db              # Main database
+│   ├── opportunities.db            # Opportunities cache
+│   └── donors.db                   # Donor database
+├── config/
+│   ├── monitoring_config.json      # Monitoring configuration
+│   ├── donor_config.json          # Donor system configuration
+│   └── analytics_report.json      # Analytics reports
+├── scripts/
+│   ├── implement_next_steps.py     # Enhancement implementation
+│   └── test_paths.py              # Path testing utility
 └── requirements.txt                 # All dependencies
 ```
 
@@ -214,7 +257,7 @@ Customize sources in `src/enhanced_discovery_engine.py`:
 
 Run the comprehensive test suite:
 ```bash
-python test_enhanced_features.py
+python tests/test_enhanced_features.py
 ```
 
 Tests include:
@@ -239,8 +282,63 @@ Tests include:
 - **Profile Management**: Resume upload and profile editing
 - **Enhanced Discovery**: Source configuration and real-time discovery
 - **Smart Matching**: AI-powered matching with visual analytics
+- **Donor Management**: Comprehensive donor database and matching system
 - **Proposal Editor**: Rich text editing with AI assistance
 - **Results Dashboard**: Analytics and export capabilities
+
+---
+
+## 💰 Donor & Foundation Integration
+
+### Comprehensive Donor Database
+The system includes a sophisticated donor and foundation management system with:
+
+#### **Database Features**
+- **100+ Pre-loaded Donors**: Major foundations, philanthropists, and funding organizations
+- **Global Coverage**: Donors from all major regions and countries
+- **Multi-type Support**: Individual philanthropists, foundations, corporations, government entities
+- **Rich Metadata**: Focus areas, giving amounts, contact information, application processes
+
+#### **Smart Matching System**
+- **AI-Powered Matching**: Automatically matches opportunities with relevant donors
+- **Scoring Algorithm**: Calculates match scores based on focus areas, geography, and giving patterns
+- **Contact Strategies**: Provides tailored approach recommendations for each donor type
+- **Portfolio Tracking**: Tracks donor interests and funding history
+
+#### **Usage Examples**
+```python
+# Find donors for your space research project
+from donor_enhanced_discovery import DonorEnhancedDiscovery
+
+discovery = DonorEnhancedDiscovery()
+recommendations = discovery.get_donor_recommendations(opportunity_id)
+
+# Search for specific types of donors
+from donor_database import DonorDatabase
+
+donor_db = DonorDatabase()
+space_donors = donor_db.search_donors("space aerospace", focus_area="technology")
+```
+
+#### **Pre-loaded Donor Categories**
+- **Major Foundations**: Gates Foundation, Ford Foundation, Open Society Foundations
+- **Tech Philanthropists**: MacKenzie Scott, Warren Buffett, Chan Zuckerberg Initiative
+- **Corporate Foundations**: Patagonia Foundation, Apple environmental initiatives
+- **International Organizations**: UN foundations, World Bank initiatives
+- **Regional Foundations**: Local and regional funding organizations
+
+#### **Integration with Proposals**
+- **Automatic Matching**: Every discovered opportunity is automatically matched with relevant donors
+- **Export Capabilities**: Export donor lists in CSV, JSON, or Excel formats
+- **Contact Management**: Track communication history and application deadlines
+- **Success Tracking**: Monitor funding success rates and donor preferences
+
+### Getting Started with Donor Features
+1. **Access Donor Tab**: Open the "💰 Donors & Foundations" tab in the GUI
+2. **Search Donors**: Use filters by region, focus area, or keyword search
+3. **View Details**: Click on any donor to see full profile and contact information
+4. **Find Matches**: View automatically matched opportunities for each donor
+5. **Export Data**: Export donor information for external relationship management
 
 ---
 
@@ -333,7 +431,7 @@ Tests include:
 ### Getting Help
 1. Check the [documentation](docs/)
 2. Review [common issues](docs/troubleshooting.md)
-3. Run the test suite: `python test_enhanced_features.py`
+3. Run the test suite: `python tests/test_enhanced_features.py`
 4. Open an issue on GitHub
 
 ### Contact
