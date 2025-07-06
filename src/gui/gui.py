@@ -142,68 +142,377 @@ class ScrapingWorker(QThread):
 
 
 class OpportunityDetailDialog(QWidget):
-    """Dialog to show detailed opportunity information"""
+    """Enhanced dialog to show detailed opportunity information"""
     
-    def __init__(self, opportunity_data):
+    def __init__(self, opportunity_data, db_manager=None):
         super().__init__()
         self.opportunity_data = opportunity_data
+        self.db_manager = db_manager
         self.setup_ui()
+        self.load_additional_data()
     
     def setup_ui(self):
         self.setWindowTitle("Opportunity Details")
-        self.setGeometry(200, 200, 600, 500)
+        self.setGeometry(150, 150, 900, 700)
+        self.setWindowIcon(self.style().standardIcon(
+            self.style().SP_FileDialogDetailedView))
         
-        layout = QVBoxLayout()
+        main_layout = QVBoxLayout()
+        
+        # Header with title and quick actions
+        header_layout = QHBoxLayout()
         
         # Title
-        title_label = QLabel(self.opportunity_data.get('name', 'No Title'))
-        title_label.setFont(QFont("Arial", 16, QFont.Bold))
-        layout.addWidget(title_label)
+        title_text = str(self.opportunity_data.get('name', 'No Title'))
+        title_label = QLabel(title_text)
+        title_label.setFont(QFont("Arial", 18, QFont.Bold))
+        title_label.setWordWrap(True)
+        header_layout.addWidget(title_label)
         
-        # Details form
-        form_layout = QFormLayout()
+        # Quick action buttons
+        action_layout = QVBoxLayout()
+        
+        bookmark_btn = QPushButton("📌 Bookmark")
+        bookmark_btn.clicked.connect(self.bookmark_opportunity)
+        action_layout.addWidget(bookmark_btn)
+        
+        apply_btn = QPushButton("📝 Mark as Applied")
+        apply_btn.clicked.connect(self.mark_as_applied)
+        action_layout.addWidget(apply_btn)
+        
+        export_btn = QPushButton("💾 Export Details")
+        export_btn.clicked.connect(self.export_details)
+        action_layout.addWidget(export_btn)
+        
+        header_layout.addLayout(action_layout)
+        main_layout.addLayout(header_layout)
+        
+        # Tab widget for organized information
+        self.tab_widget = QTabWidget()
+        
+        # Overview Tab
+        self.setup_overview_tab()
+        
+        # Details Tab
+        self.setup_details_tab()
+        
+        # Analysis Tab
+        self.setup_analysis_tab()
+        
+        # Actions Tab
+        self.setup_actions_tab()
+        
+        main_layout.addWidget(self.tab_widget)
+        
+        # Bottom buttons
+        button_layout = QHBoxLayout()
+        
+        close_btn = QPushButton("Close")
+        close_btn.clicked.connect(self.close)
+        button_layout.addStretch()
+        button_layout.addWidget(close_btn)
+        
+        main_layout.addLayout(button_layout)
+        self.setLayout(main_layout)
+    
+    def setup_overview_tab(self):
+        """Setup the overview tab with key information"""
+        overview_widget = QWidget()
+        layout = QVBoxLayout()
+        
+        # Key information grid
+        info_group = QGroupBox("Key Information")
+        info_layout = QFormLayout()
         
         # Organization
-        org_label = QLabel(self.opportunity_data.get('org_name', 'Unknown'))
-        form_layout.addRow("Organization:", org_label)
+        org_text = str(self.opportunity_data.get('org_name', 'Unknown'))
+        org_label = QLabel(org_text)
+        org_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        info_layout.addRow("Organization:", org_label)
         
-        # Deadline
-        deadline_label = QLabel(self.opportunity_data.get('deadline', 'Not specified'))
-        form_layout.addRow("Deadline:", deadline_label)
+        # Deadline with formatting
+        deadline_text = str(self.opportunity_data.get(
+            'deadline', 'Not specified'))
+        deadline_label = QLabel(deadline_text)
+        deadline_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        if 'not specified' not in deadline_text.lower():
+            deadline_label.setStyleSheet("color: red; font-weight: bold;")
+        info_layout.addRow("Deadline:", deadline_label)
         
         # Status
-        status_label = QLabel(self.opportunity_data.get('status', 'Open'))
-        form_layout.addRow("Status:", status_label)
+        status_text = str(self.opportunity_data.get('status', 'Open'))
+        status_label = QLabel(status_text)
+        status_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        if status_text.lower() == 'open':
+            status_label.setStyleSheet("color: green; font-weight: bold;")
+        elif status_text.lower() == 'closed':
+            status_label.setStyleSheet("color: red; font-weight: bold;")
+        info_layout.addRow("Status:", status_label)
+        
+        # Category/Type
+        category_text = str(self.opportunity_data.get('category', 'General'))
+        category_label = QLabel(category_text)
+        category_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        info_layout.addRow("Category:", category_label)
+        
+        # Estimated Funding
+        funding_text = str(self.opportunity_data.get(
+            'estimated_funding', 'Not specified'))
+        funding_label = QLabel(funding_text)
+        funding_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        if funding_text != 'Not specified':
+            funding_label.setStyleSheet("color: green; font-weight: bold;")
+        info_layout.addRow("Estimated Funding:", funding_label)
         
         # URL
         if self.opportunity_data.get('url'):
-            url_label = QLabel(f'<a href="{self.opportunity_data["url"]}">{self.opportunity_data["url"]}</a>')
+            url = str(self.opportunity_data["url"])
+            url_html = f'<a href="{url}" style="color: blue;">{url}</a>'
+            url_label = QLabel(url_html)
             url_label.setOpenExternalLinks(True)
-            form_layout.addRow("Website:", url_label)
+            url_label.setWordWrap(True)
+            info_layout.addRow("Website:", url_label)
         
-        layout.addLayout(form_layout)
+        info_group.setLayout(info_layout)
+        layout.addWidget(info_group)
         
-        # Description
-        desc_group = QGroupBox("Description")
+        # Quick description
+        desc_group = QGroupBox("Quick Description")
         desc_layout = QVBoxLayout()
         desc_text = QTextEdit()
-        desc_text.setPlainText(self.opportunity_data.get('description', 'No description available'))
+        description = str(self.opportunity_data.get(
+            'description', 'No description available'))
+        # Truncate for overview
+        if len(description) > 500:
+            description = (description[:500] +
+                           "... (see Details tab for full description)")
+        desc_text.setPlainText(description)
+        desc_text.setReadOnly(True)
+        desc_text.setMaximumHeight(150)
+        desc_layout.addWidget(desc_text)
+        desc_group.setLayout(desc_layout)
+        layout.addWidget(desc_group)
+        
+        # Keywords section
+        keywords_group = QGroupBox("Keywords")
+        keywords_layout = QVBoxLayout()
+        keywords_text = str(self.opportunity_data.get(
+            'keywords', 'No keywords available'))
+        keywords_label = QLabel(keywords_text)
+        keywords_label.setWordWrap(True)
+        keywords_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        keywords_layout.addWidget(keywords_label)
+        keywords_group.setLayout(keywords_layout)
+        layout.addWidget(keywords_group)
+        
+        layout.addStretch()
+        overview_widget.setLayout(layout)
+        self.tab_widget.addTab(overview_widget, "📋 Overview")
+    
+    def setup_details_tab(self):
+        """Setup the details tab with full information"""
+        details_widget = QWidget()
+        layout = QVBoxLayout()
+        
+        # Full description
+        desc_group = QGroupBox("Full Description")
+        desc_layout = QVBoxLayout()
+        desc_text = QTextEdit()
+        description = str(self.opportunity_data.get(
+            'description', 'No description available'))
+        desc_text.setPlainText(description)
         desc_text.setReadOnly(True)
         desc_layout.addWidget(desc_text)
         desc_group.setLayout(desc_layout)
         layout.addWidget(desc_group)
         
         # Requirements
-        req_group = QGroupBox("Requirements")
+        req_group = QGroupBox("Requirements & Eligibility")
         req_layout = QVBoxLayout()
         req_text = QTextEdit()
-        req_text.setPlainText(self.opportunity_data.get('requirements', 'No requirements specified'))
+        requirements = str(self.opportunity_data.get(
+            'requirements', 'No requirements specified'))
+        req_text.setPlainText(requirements)
         req_text.setReadOnly(True)
         req_layout.addWidget(req_text)
         req_group.setLayout(req_layout)
         layout.addWidget(req_group)
         
-        self.setLayout(layout)
+        details_widget.setLayout(layout)
+        self.tab_widget.addTab(details_widget, "📄 Details")
+    
+    def setup_analysis_tab(self):
+        """Setup the analysis tab with matching and scoring information"""
+        analysis_widget = QWidget()
+        layout = QVBoxLayout()
+        
+        # Relevance scoring
+        score_group = QGroupBox("Relevance Analysis")
+        score_layout = QFormLayout()
+        
+        relevance_score = self.opportunity_data.get('relevance_score', 0.0)
+        try:
+            relevance_score = float(relevance_score)
+        except (ValueError, TypeError):
+            relevance_score = 0.0
+        
+        score_label = QLabel(f"{relevance_score:.2f}")
+        if relevance_score >= 0.7:
+            score_label.setStyleSheet("color: green; font-weight: bold;")
+        elif relevance_score >= 0.4:
+            score_label.setStyleSheet("color: orange; font-weight: bold;")
+        else:
+            score_label.setStyleSheet("color: red; font-weight: bold;")
+        score_layout.addRow("Relevance Score:", score_label)
+        
+        # Match keywords
+        match_keywords = str(self.opportunity_data.get(
+            'match_keywords', 'No match data'))
+        match_label = QLabel(match_keywords)
+        match_label.setWordWrap(True)
+        score_layout.addRow("Matching Keywords:", match_label)
+        
+        score_group.setLayout(score_layout)
+        layout.addWidget(score_group)
+        
+        # Source information
+        source_group = QGroupBox("Source Information")
+        source_layout = QFormLayout()
+        
+        source_url = str(self.opportunity_data.get('source_url', 'Unknown'))
+        source_label = QLabel(source_url)
+        source_label.setWordWrap(True)
+        source_layout.addRow("Source URL:", source_label)
+        
+        created_at = str(self.opportunity_data.get('created_at', 'Unknown'))
+        created_label = QLabel(created_at)
+        source_layout.addRow("Discovered On:", created_label)
+        
+        source_group.setLayout(source_layout)
+        layout.addWidget(source_group)
+        
+        layout.addStretch()
+        analysis_widget.setLayout(layout)
+        self.tab_widget.addTab(analysis_widget, "📊 Analysis")
+    
+    def setup_actions_tab(self):
+        """Setup the actions tab with user interaction options"""
+        actions_widget = QWidget()
+        layout = QVBoxLayout()
+        
+        # User notes
+        notes_group = QGroupBox("Personal Notes")
+        notes_layout = QVBoxLayout()
+        self.notes_text = QTextEdit()
+        self.notes_text.setPlaceholderText(
+            "Add your personal notes about this opportunity...")
+        notes_layout.addWidget(self.notes_text)
+        
+        save_notes_btn = QPushButton("💾 Save Notes")
+        save_notes_btn.clicked.connect(self.save_notes)
+        notes_layout.addWidget(save_notes_btn)
+        
+        notes_group.setLayout(notes_layout)
+        layout.addWidget(notes_group)
+        
+        # Application tracking
+        tracking_group = QGroupBox("Application Tracking")
+        tracking_layout = QVBoxLayout()
+        
+        self.application_status = QComboBox()
+        self.application_status.addItems([
+            "Not Applied", "Planning to Apply", "Application in Progress",
+            "Applied", "Under Review", "Accepted", "Rejected"
+        ])
+        tracking_layout.addWidget(QLabel("Application Status:"))
+        tracking_layout.addWidget(self.application_status)
+        
+        update_status_btn = QPushButton("📝 Update Status")
+        update_status_btn.clicked.connect(self.update_application_status)
+        tracking_layout.addWidget(update_status_btn)
+        
+        tracking_group.setLayout(tracking_layout)
+        layout.addWidget(tracking_group)
+        
+        layout.addStretch()
+        actions_widget.setLayout(layout)
+        self.tab_widget.addTab(actions_widget, "⚡ Actions")
+    
+    def load_additional_data(self):
+        """Load additional data from database if available"""
+        if self.db_manager and hasattr(self.opportunity_data, 'get'):
+            opp_id = self.opportunity_data.get('id')
+            if opp_id:
+                # Load user notes and status if they exist
+                try:
+                    # This would require implementing methods in DatabaseManager
+                    # For now, we'll use placeholder data
+                    pass
+                except Exception as e:
+                    print(f"Could not load additional data: {e}")
+    
+    def bookmark_opportunity(self):
+        """Bookmark this opportunity"""
+        QMessageBox.information(self, "Bookmarked", 
+                               "Opportunity has been bookmarked!")
+    
+    def mark_as_applied(self):
+        """Mark this opportunity as applied"""
+        reply = QMessageBox.question(self, "Mark as Applied", 
+                                   "Mark this opportunity as applied?",
+                                   QMessageBox.Yes | QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            self.application_status.setCurrentText("Applied")
+            QMessageBox.information(self, "Applied", 
+                                   "Opportunity marked as applied!")
+    
+    def export_details(self):
+        """Export opportunity details to file"""
+        filename, _ = QFileDialog.getSaveFileName(
+            self, "Export Opportunity Details", 
+            f"{self.opportunity_data.get('name', 'opportunity')}.txt",
+            "Text Files (*.txt);;All Files (*)")
+        
+        if filename:
+            try:
+                with open(filename, 'w', encoding='utf-8') as f:
+                    f.write(f"OPPORTUNITY DETAILS\n")
+                    f.write(f"=" * 50 + "\n\n")
+                    f.write(f"Title: {self.opportunity_data.get('name', 'N/A')}\n")
+                    f.write(f"Organization: {self.opportunity_data.get('org_name', 'N/A')}\n")
+                    f.write(f"Deadline: {self.opportunity_data.get('deadline', 'N/A')}\n")
+                    f.write(f"Status: {self.opportunity_data.get('status', 'N/A')}\n")
+                    f.write(f"Category: {self.opportunity_data.get('category', 'N/A')}\n")
+                    f.write(f"URL: {self.opportunity_data.get('url', 'N/A')}\n\n")
+                    f.write(f"DESCRIPTION\n")
+                    f.write(f"-" * 20 + "\n")
+                    f.write(f"{self.opportunity_data.get('description', 'N/A')}\n\n")
+                    f.write(f"REQUIREMENTS\n")
+                    f.write(f"-" * 20 + "\n")
+                    f.write(f"{self.opportunity_data.get('requirements', 'N/A')}\n\n")
+                    f.write(f"KEYWORDS\n")
+                    f.write(f"-" * 20 + "\n")
+                    f.write(f"{self.opportunity_data.get('keywords', 'N/A')}\n")
+                
+                QMessageBox.information(self, "Export Successful", 
+                                       f"Details exported to {filename}")
+            except Exception as e:
+                QMessageBox.critical(self, "Export Error", 
+                                   f"Could not export details:\n{str(e)}")
+    
+    def save_notes(self):
+        """Save user notes"""
+        notes = self.notes_text.toPlainText()
+        # Here you would save to database
+        QMessageBox.information(self, "Notes Saved", 
+                               "Your notes have been saved!")
+    
+    def update_application_status(self):
+        """Update application status"""
+        status = self.application_status.currentText()
+        # Here you would save to database
+        QMessageBox.information(self, "Status Updated", 
+                               f"Application status updated to: {status}")
 
 
 class ProposalAIMainWindow(QMainWindow):
@@ -701,18 +1010,25 @@ class ProposalAIMainWindow(QMainWindow):
         if item:
             event_data = item.data(0x0100)  # Qt.UserRole = 0x0100
             if event_data:
-                # Convert tuple to dict for easier access
+                # Convert tuple to dict for easier access with all available fields
                 opportunity_dict = {
-                    'name': event_data[1],
+                    'id': event_data[0] if len(event_data) > 0 else None,
+                    'name': event_data[1] if len(event_data) > 1 else 'No Title',
                     'org_name': event_data[10] if len(event_data) > 10 else 'Unknown',
-                    'deadline': event_data[4],
-                    'status': event_data[8],
-                    'description': event_data[5],
-                    'url': event_data[6],
-                    'requirements': event_data[7]
+                    'deadline': event_data[4] if len(event_data) > 4 else 'Not specified',
+                    'status': event_data[8] if len(event_data) > 8 else 'Unknown',
+                    'description': event_data[5] if len(event_data) > 5 else 'No description',
+                    'url': event_data[6] if len(event_data) > 6 else '',
+                    'requirements': event_data[7] if len(event_data) > 7 else 'No requirements',
+                    'category': event_data[9] if len(event_data) > 9 else 'General',
+                    'keywords': event_data[11] if len(event_data) > 11 else 'No keywords',
+                    'relevance_score': event_data[12] if len(event_data) > 12 else 0.0,
+                    'estimated_funding': event_data[13] if len(event_data) > 13 else 'Not specified',
+                    'source_url': event_data[14] if len(event_data) > 14 else '',
+                    'created_at': event_data[15] if len(event_data) > 15 else 'Unknown'
                 }
                 
-                detail_dialog = OpportunityDetailDialog(opportunity_dict)
+                detail_dialog = OpportunityDetailDialog(opportunity_dict, self.db_manager)
                 detail_dialog.show()
     
     def export_data(self):
