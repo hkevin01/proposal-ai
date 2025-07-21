@@ -551,6 +551,35 @@ Word Count: {self.current_proposal['word_count']}
             QMessageBox.information(self, "Exported", f"Word document exported to: {filename}")
 
 
+class CollaborativeProposalEditor(ProposalEditorWidget):
+    """
+    Collaborative Proposal Editor supporting multi-user real-time editing.
+    Future: Integrate with web/mobile clients via API.
+    """
+    def __init__(self, db_manager=None, user_id=None):
+        super().__init__(db_manager)
+        self.user_id = user_id
+        self.active_users = []  # Track active editors
+        self.version_history = []  # Store proposal versions
+        self.setup_collaboration()
+
+    def setup_collaboration(self):
+        """Initialize collaboration features (stub)"""
+        # TODO: Integrate websocket or API for real-time sync
+        # TODO: Implement user roles and permissions
+        # TODO: Add version history tracking and rollback
+        pass
+
+    def save_version(self):
+        """Save current proposal version"""
+        self.version_history.append(self.current_proposal.copy())
+
+    def rollback_version(self, version_idx: int):
+        """Rollback to a previous version"""
+        if 0 <= version_idx < len(self.version_history):
+            self.current_proposal = self.version_history[version_idx].copy()
+            self.update_preview()
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     

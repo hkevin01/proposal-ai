@@ -7,7 +7,7 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/hkevin01/proposal-ai/ci.yml?branch=main)](https://github.com/hkevin01/proposal-ai/actions)
 [![Coverage](https://img.shields.io/codecov/c/github/hkevin01/proposal-ai?style=flat)](https://codecov.io/gh/hkevin01/proposal-ai)
 [![Last Commit](https://img.shields.io/github/last-commit/hkevin01/proposal-ai)](https://github.com/hkevin01/proposal-ai/commits/main)
-[![Phase](https://img.shields.io/badge/Phase-4%20%7C%20Submission%20Automation-blue)](docs/project_plan.md)
+[![Phase](https://img.shields.io/badge/Phase-8%20%7C%20Marketplace%20%26%20Grant%20Writing-purple)](docs/project_plan.md)
 [![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen)](logs/test_output_2025-07-21.txt)
 
 ---

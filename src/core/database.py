@@ -4,6 +4,7 @@ Database setup and models for Proposal AI
 import sqlite3
 from datetime import datetime
 from typing import Dict, Optional
+import logging
 
 from .config import MAIN_DATABASE_PATH
 
@@ -147,6 +148,17 @@ def setup_database():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (proposal_id) REFERENCES proposals (id),
             FOREIGN KEY (opportunity_id) REFERENCES scraped_opportunities (id)
+        )
+    ''')
+
+    # Submission status table for tracking proposal submission statuses
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS submission_status (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            proposal_id INTEGER,
+            status TEXT,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (proposal_id) REFERENCES proposals (id)
         )
     ''')
 
@@ -416,6 +428,19 @@ class DatabaseManager:
         opportunities = cursor.fetchall()
         conn.close()
         return opportunities
+
+
+# Phase 4: Submission Automation - Status Tracking
+class SubmissionStatus:
+    def __init__(self, proposal_id, status, timestamp):
+        self.proposal_id = proposal_id
+        self.status = status
+        self.timestamp = timestamp
+
+    def update_status(self, new_status):
+        self.status = new_status
+        # TODO: Add database update logic
+        logging.info(f"Submission {self.proposal_id} status updated to {new_status}")
 
 
 if __name__ == "__main__":
