@@ -340,38 +340,58 @@ See details in [docs/phase6_web_mobile.md](docs/phase6_web_mobile.md)
 - [ ] Expand API docs and developer guides
 - [ ] Add usage examples for all new features
 
-## 📁 Source Files to Create or Modify
+### Phase 17: Advanced Analytics & Visualization
+- [ ] Integrate interactive charts and dashboards (e.g., Plotly, Dash)
+- [ ] Add export options for charts (PNG, PDF)
+- [ ] Enable filtering and drill-down analytics in GUI
+- [ ] Add API endpoints for custom analytics queries
 
-**To Create:**
-- src/services/api_service.py
-- src/services/notification_service.py
-- src/services/analytics_service.py
-- src/utils/logging_config.py
-- tests/test_services.py
-- docs/phase9_service_layer.md
-- docs/phase10_testing.md
-- docs/phase11_error_logging.md
-- docs/phase12_security.md
-- docs/phase13_performance.md
-- docs/phase14_ux.md
-- docs/phase15_docs.md
+### Phase 18: Data Import & Integration
+- [ ] Support importing opportunities and proposals from external sources (CSV, Excel, APIs)
+- [ ] Add data validation and mapping tools
+- [ ] Document integration process and supported formats
 
-**To Modify:**
-- src/gui/gui.py
-- src/api/web_api.py
-- src/core/config.py
-- src/discovery/enhanced_discovery_engine.py
-- src/utils/export.py
-- README.md
+### Phase 19: Automated Testing & CI/CD
+- [ ] Expand test coverage for analytics, export, and visualization
+- [ ] Add GUI and API integration tests
+- [ ] Integrate with CI/CD pipeline for automated builds and tests
 
-## Legend 📋
-- ✅ **Completed** - Task finished and tested
-- 🔄 **In Progress** - Currently being worked on
-- 📋 **Planned** - Ready to start
-- 📧 **Email/Communication** - Related to messaging
-- 📊 **Analytics/Dashboard** - Data visualization and tracking
-- 🚀 **Deployment** - Release and distribution
-- 👥 **Users** - User-related features
-- 🎯 **Targets** - Goals and objectives
-- ⚠️ **Risks** - Potential issues and solutions
-- 🔮 **Future** - Planned enhancements
+### Phase 20: User Roles & Permissions
+- [ ] Implement user roles (admin, editor, viewer)
+- [ ] Add permission checks for sensitive actions (export, analytics, sharing)
+- [ ] Update GUI and API to support role-based access
+
+## Improvement Suggestions
+- Refactor long lines and ensure PEP8 compliance across all modules
+- Add granular exception handling and logging
+- Implement unit tests for new import features and environment validation
+- Add configuration validation and schema checks for import sources
+- Expand analytics to support real-time updates and data refresh
+- Document all new features and update usage examples
+- Add CI/CD integration for automated testing and linting
+- Implement user roles/permissions for analytics and import actions
+
+## Next Phases
+- [ ] Refactor codebase for PEP8 and style compliance
+- [ ] Add granular exception handling and logging
+- [ ] Implement unit tests for import and environment validation
+- [ ] Validate import source configuration and schema
+- [ ] Support real-time analytics/data refresh
+- [ ] Update documentation and usage examples
+- [ ] Integrate CI/CD for tests and linting
+- [ ] Implement user roles/permissions
+
+## Phase 19: Roles & Permissions
+See docs/phase19_roles_permissions.md for details.
+
+## CI/CD Integration
+See .github/workflows/ci.yml for pipeline configuration.
+
+## Source Files to Create/Modify
+- src/services/analytics_service.py (refactor, add tests, improve logging)
+- src/utils/data_import.py (schema validation, error handling)
+- tests/test_analytics_service.py (add tests for import and validation)
+- config/import_sources.yaml (add schema, validation)
+- docs/project_plan.md (update phases, checkboxes, suggestions)
+- docs/phase19_roles_permissions.md (new documentation for roles/permissions)
+- .github/workflows/ci.yml (CI/CD integration)

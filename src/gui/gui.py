@@ -41,6 +41,10 @@ from ..discovery.discovery_engine import OpportunityProcessor
 from src.services.api_service import APIService
 from src.services.notification_service import NotificationService
 from src.services.analytics_service import AnalyticsService
+from src.community.collaboration import CollaborationManager
+from src.utils.export import export_proposal_pdf, export_analytics_docx
+from src.analytics.visualization import plot_proposal_counts, plot_success_rates
+from src.analytics.interactive_dashboard import show_interactive_proposal_counts, show_interactive_success_rates
 
 # Import the AI proposal components
 try:
@@ -525,6 +529,8 @@ class ProposalAIMainWindow(QMainWindow):
         super().__init__()
         self.db_manager = DatabaseManager()
         self.scraping_worker = None
+        self.collab = CollaborationManager()
+        self.analytics = AnalyticsService()
         self.setup_ui()
         self.load_initial_data()
     
@@ -1079,6 +1085,56 @@ class MainWindow(QMainWindow):
         app = QApplication(sys.argv)
         self.show()
         app.exec_()
+    
+    def export_proposal(self, proposal, filename):
+        """Export a proposal to PDF."""
+        export_proposal_pdf(proposal, filename)
+        print(f"Proposal exported to {filename}")
+
+    def export_analytics(self, analytics, filename):
+        """Export analytics data to DOCX."""
+        export_analytics_docx(analytics, filename)
+        print(f"Analytics exported to {filename}")
+    
+    def visualize_proposal_counts(self):
+        """Visualize proposal counts as a bar chart."""
+        stats = self.analytics.get_statistics()
+        plot_proposal_counts(stats)
+
+    def visualize_success_rates(self):
+        """Visualize proposal success rates as a line chart."""
+        stats = self.analytics.get_statistics()
+        plot_success_rates(stats)
+
+    def export_proposal_chart(self, filename):
+        """Export proposal counts chart to file."""
+        import matplotlib.pyplot as plt
+        stats = self.analytics.get_statistics()
+        plot_proposal_counts(stats)
+        plt.savefig(filename)
+        print(f"Proposal chart exported to {filename}")
+
+    def export_success_rate_chart(self, filename):
+        """Export success rates chart to file."""
+        import matplotlib.pyplot as plt
+        stats = self.analytics.get_statistics()
+        plot_success_rates(stats)
+        plt.savefig(filename)
+        print(f"Success rate chart exported to {filename}")
+    
+    def show_interactive_proposal_counts(self, filter_fn=None):
+        """Show interactive proposal counts chart with optional filtering."""
+        stats = self.analytics.get_statistics()
+        if filter_fn:
+            stats["proposal_counts"] = list(filter(filter_fn, stats["proposal_counts"]))
+        show_interactive_proposal_counts(stats)
+
+    def show_interactive_success_rates(self, filter_fn=None):
+        """Show interactive success rates chart with optional filtering."""
+        stats = self.analytics.get_statistics()
+        if filter_fn:
+            stats["success_rates"] = list(filter(filter_fn, stats["success_rates"]))
+        show_interactive_success_rates(stats)
 
 
 def main():
