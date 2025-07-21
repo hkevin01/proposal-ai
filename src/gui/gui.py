@@ -38,6 +38,9 @@ from PyQt5.QtWidgets import (
 from ..core.config import MAIN_DATABASE_PATH
 from ..core.database import DatabaseManager
 from ..discovery.discovery_engine import OpportunityProcessor
+from src.services.api_service import APIService
+from src.services.notification_service import NotificationService
+from src.services.analytics_service import AnalyticsService
 
 # Import the AI proposal components
 try:
@@ -684,7 +687,6 @@ class ProposalAIMainWindow(QMainWindow):
         layout.addWidget(results_group)
         
         self.tab_widget.addTab(discovery_widget, "🔍 Discovery")
-    
     def create_opportunities_tab(self):
         """Tab for browsing and managing opportunities"""
         opportunities_widget = QWidget()
@@ -851,7 +853,7 @@ class ProposalAIMainWindow(QMainWindow):
         notification_group.setLayout(notification_layout)
         layout.addWidget(notification_group)
         
-        layout.addStretch()
+        layout.addStretch();
         
         self.tab_widget.addTab(settings_widget, "⚙️ Settings")
     
@@ -1050,6 +1052,33 @@ class ProposalAIMainWindow(QMainWindow):
         QMessageBox.about(self, "About Proposal AI", 
                          "Proposal AI v1.0\n\nAI-powered proposal discovery and management system\n"
                          "for space and technology opportunities.")
+    
+    # TODO: Refactor business logic into service layer modules (api_service, notification_service, analytics_service)
+
+
+class OnboardingDialog:
+    def __init__(self):
+        try:
+            # TODO: Implement onboarding/help dialog
+            pass
+        except Exception as e:
+            print(f"Error initializing onboarding dialog: {e}")
+
+
+class MainWindow(QMainWindow):
+    """Main application window for Proposal AI."""
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Proposal AI")
+        self.setGeometry(100, 100, 800, 600)
+        label = QLabel("Welcome to Proposal AI!", self)
+        label.move(350, 250)
+
+    def show(self):
+        """Show the main window."""
+        app = QApplication(sys.argv)
+        self.show()
+        app.exec_()
 
 
 def main():

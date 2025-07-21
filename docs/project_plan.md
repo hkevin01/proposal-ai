@@ -310,65 +310,59 @@ See details in [docs/phase6_web_mobile.md](docs/phase6_web_mobile.md)
 - [ ] **Email integration** - Send proposals via email with tracking
 - [ ] **Submission tracking** - Track application status and deadlines
 
-## 🔧 TECHNICAL DEBT & IMPROVEMENTS
+## 🚀 Suggested Improvements & New Phases
 
-### Code Quality
-- [ ] **Fix lint errors** - Clean up type hints and import issues
-- [ ] **Add unit tests** - Test coverage for all major modules
-- [ ] **Error handling** - Robust error handling throughout application
-- [ ] **Logging system** - Comprehensive logging for debugging
+### Phase 9: Service Layer Refactoring
+- [ ] Create service modules for API, notifications, analytics
+- [ ] Refactor business logic out of GUI and CLI
 
-### Performance
-- [ ] **Database optimization** - Indexes and query optimization
-- [ ] **Async operations** - Async web scraping and AI generation
-- [ ] **Caching system** - Cache AI responses and scraped data
-- [ ] **Memory management** - Optimize large document processing
+### Phase 10: Automated Testing & Coverage
+- [ ] Add unit/integration tests for all modules
+- [ ] Set up coverage reporting and CI integration
 
-### Security
-- [ ] **API key management** - Secure storage of OpenAI and other API keys
-- [ ] **Data encryption** - Encrypt sensitive user data
-- [ ] **Input validation** - Validate all user inputs and scraped data
-- [ ] **Rate limiting** - Implement proper rate limiting for APIs
+### Phase 11: Centralized Error Handling & Logging
+- [ ] Implement standardized error handling
+- [ ] Add centralized logging configuration
 
-## 💡 FEATURE PRIORITIES
+### Phase 12: Security Hardening
+- [ ] Encrypt sensitive config files
+- [ ] Add input validation/sanitization
 
-### High Priority (Next 2 weeks)
-1. **Proposal Editor GUI** - Most critical missing piece
-2. **PDF/Word Export** - Essential for usability
-3. **Database Persistence** - Save user work
-4. **AI Quality Improvements** - Better prompts and templates
+### Phase 13: Performance Optimization
+- [ ] Implement async operations
+- [ ] Add caching for data and API responses
 
-### Medium Priority (Next month)
-1. **Real Website Integration** - Test on actual target sites
-2. **Email Submission** - Basic email sending functionality
-3. **User Profiles** - Personalization features
-4. **Advanced Search** - Better opportunity filtering
+### Phase 14: Enhanced User Experience
+- [ ] Improve GUI responsiveness and accessibility
+- [ ] Add onboarding/help dialogs
 
-### Low Priority (Future releases)
-1. **Web Form Automation** - Complex but valuable
-2. **Collaboration Features** - Multi-user editing
-3. **Analytics Dashboard** - Success rate tracking
-4. **Mobile App** - Extended platform support
+### Phase 15: Documentation Expansion
+- [ ] Expand API docs and developer guides
+- [ ] Add usage examples for all new features
 
-## 📋 SUCCESS METRICS
+## 📁 Source Files to Create or Modify
 
-### Short-term (1 month)
-- [ ] Complete proposal generation workflow (discovery → generation → export)
-- [ ] Generate 10+ sample proposals across different templates
-- [ ] Export proposals to PDF/Word with proper formatting
-- [ ] User can save/load work from database
+**To Create:**
+- src/services/api_service.py
+- src/services/notification_service.py
+- src/services/analytics_service.py
+- src/utils/logging_config.py
+- tests/test_services.py
+- docs/phase9_service_layer.md
+- docs/phase10_testing.md
+- docs/phase11_error_logging.md
+- docs/phase12_security.md
+- docs/phase13_performance.md
+- docs/phase14_ux.md
+- docs/phase15_docs.md
 
-### Medium-term (3 months)
-- [ ] Successfully scrape opportunities from 5+ major sources
-- [ ] AI generates proposals meeting 80%+ of requirements automatically
-- [ ] Submit 5+ real proposals using the system
-- [ ] Positive user feedback from 10+ beta testers
-
-### Long-term (6 months)
-- [ ] 100+ active users using the system
-- [ ] 50%+ success rate on submitted proposals
-- [ ] Integration with major funding databases
-- [ ] Community sharing and collaboration features
+**To Modify:**
+- src/gui/gui.py
+- src/api/web_api.py
+- src/core/config.py
+- src/discovery/enhanced_discovery_engine.py
+- src/utils/export.py
+- README.md
 
 ## Legend 📋
 - ✅ **Completed** - Task finished and tested

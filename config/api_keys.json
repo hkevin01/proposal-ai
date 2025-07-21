@@ -1,0 +1,5 @@
+{
+  "openai": "YOUR_OPENAI_API_KEY",
+  "slack": "YOUR_SLACK_API_KEY",
+  "teams": "YOUR_TEAMS_API_KEY"
+}

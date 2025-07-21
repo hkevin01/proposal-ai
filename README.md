@@ -258,6 +258,21 @@ Customize sources in `src/enhanced_discovery_engine.py`:
 
 ---
 
+## 🌐 Web & Mobile API
+- FastAPI endpoints for opportunities, proposals, analytics
+- OAuth2 authentication and cross-platform sync
+- API documentation in docs/phase7_web_api.md
+
+## ⚙️ Configuration
+- Centralized config files for API keys, notifications, user preferences
+- See config/api_keys.json, config/notification_settings.json, config/user_preferences.json
+
+## 🔔 Notifications
+- Email and push notification settings in config/notification_settings.json
+- Integrated with user preferences and dashboard
+
+---
+
 ## 📊 Performance Metrics
 
 ### Discovery Capacity
@@ -359,6 +374,24 @@ space_donors = donor_db.search_donors("space aerospace", focus_area="technology"
 3. **View Details**: Click on any donor to see full profile and contact information
 4. **Find Matches**: View automatically matched opportunities for each donor
 5. **Export Data**: Export donor information for external relationship management
+
+---
+
+## 🚀 New Features
+- Service layer modules for API, notifications, analytics
+- Centralized error handling and logging
+- Config encryption utility
+- Async discovery and caching stubs
+- Onboarding/help dialog in GUI
+
+## 📚 Documentation
+- [API Usage](docs/phase7_web_api.md)
+- [Testing & Coverage](docs/phase10_testing.md)
+- [Error Handling & Logging](docs/phase11_error_logging.md)
+- [Security Hardening](docs/phase12_security.md)
+- [Performance Optimization](docs/phase13_performance.md)
+- [Enhanced UX](docs/phase14_ux.md)
+- [Developer Guide](docs/phase15_docs.md)
 
 ---
 

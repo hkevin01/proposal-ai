@@ -1,0 +1,5 @@
+{
+  "email_reminders": true,
+  "push_notifications": true,
+  "reminder_time": "08:00"
+}
