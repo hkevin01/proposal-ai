@@ -4,6 +4,8 @@ Integrates AI proposal generation into the main PyQt interface
 """
 import json
 import sys
+import threading
+import time
 
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtGui import QFont, QTextDocument
@@ -55,8 +57,6 @@ class ProposalGenerationWorker(QThread):
             # Get or suggest template
             if not self.template:
                 self.template = self.ai_generator.suggest_template(self.context)
-                self.progress.emit(f"Selected template: {self.template.name}")
-            
             # Generate sections one by one
             proposal_sections = {}
             total_sections = len(self.template.sections)
@@ -477,59 +477,78 @@ Word Count: {self.current_proposal['word_count']}
         self.preview_text.setPlainText(preview_text)
     
     def improve_current_section(self):
-        """Improve the currently selected section"""
+        """Improve the currently selected section using AI"""
         current_item = self.sections_list.currentItem()
         if not current_item:
             QMessageBox.warning(self, "Warning", "Please select a section to improve.")
             return
-        
         section_name = current_item.text()
         current_content = current_item.data(Qt.UserRole) or ""
-        
         if not current_content.strip():
             QMessageBox.warning(self, "Warning", "Section is empty. Nothing to improve.")
             return
-        
-        # TODO: Implement AI improvement
-        QMessageBox.information(self, "Info", "AI improvement feature coming soon!")
-    
+        # Use AI to improve the section
+        improved = self.ai_generator.improve_section_content(
+            section_name, current_content, self.current_proposal, self.template_combo.currentData()
+        )
+        current_item.setData(Qt.UserRole, improved)
+        self.text_editor.setPlainText(improved)
+        self.update_preview()
+        QMessageBox.information(self, "Improved", "Section improved using AI.")
+
     def regenerate_current_section(self):
-        """Regenerate the currently selected section"""
+        """Regenerate the currently selected section using AI"""
         current_item = self.sections_list.currentItem()
         if not current_item:
             QMessageBox.warning(self, "Warning", "Please select a section to regenerate.")
             return
-        
-        # TODO: Implement section regeneration
-        QMessageBox.information(self, "Info", "Section regeneration feature coming soon!")
-    
+        section_name = current_item.text()
+        regenerated = self.ai_generator._generate_section_content(
+            section_name, self.current_proposal, self.template_combo.currentData()
+        )
+        current_item.setData(Qt.UserRole, regenerated)
+        self.text_editor.setPlainText(regenerated)
+        self.update_preview()
+        QMessageBox.information(self, "Regenerated", "Section regenerated using AI.")
+
     def export_pdf(self):
         """Export proposal to PDF"""
         if not self.current_proposal:
             QMessageBox.warning(self, "Warning", "No proposal to export.")
             return
-        
         filename, _ = QFileDialog.getSaveFileName(
             self, "Export PDF", f"{self.current_proposal['title']}.pdf", "PDF Files (*.pdf)"
         )
-        
         if filename:
-            # TODO: Implement PDF export
-            QMessageBox.information(self, "Info", f"PDF export feature coming soon!\nWould save to: {filename}")
-    
+            from fpdf import FPDF
+            pdf = FPDF()
+            pdf.add_page()
+            pdf.set_font("Arial", size=12)
+            pdf.multi_cell(0, 10, self.preview_text.toPlainText())
+            pdf.output(filename)
+            QMessageBox.information(self, "Exported", f"PDF exported to: {filename}")
+
     def export_word(self):
         """Export proposal to Word document"""
         if not self.current_proposal:
             QMessageBox.warning(self, "Warning", "No proposal to export.")
             return
-        
         filename, _ = QFileDialog.getSaveFileName(
             self, "Export Word", f"{self.current_proposal['title']}.docx", "Word Documents (*.docx)"
         )
-        
         if filename:
-            # TODO: Implement Word export
-            QMessageBox.information(self, "Info", f"Word export feature coming soon!\nWould save to: {filename}")
+            from docx import Document
+            doc = Document()
+            doc.add_heading(self.current_proposal['title'], 0)
+            doc.add_paragraph(f"Organization: {self.current_proposal['organization']}")
+            doc.add_paragraph(f"Template: {self.current_proposal['template_used']}")
+            doc.add_paragraph(f"Word Count: {self.current_proposal['word_count']}")
+            for i in range(self.sections_list.count()):
+                item = self.sections_list.item(i)
+                doc.add_heading(item.text(), level=1)
+                doc.add_paragraph(item.data(Qt.UserRole) or "")
+            doc.save(filename)
+            QMessageBox.information(self, "Exported", f"Word document exported to: {filename}")
 
 
 if __name__ == "__main__":

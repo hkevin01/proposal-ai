@@ -141,6 +141,12 @@ application.log
 error.log
 debug.log
 
+# Project logs and test output
+logs/
+logs/*.txt
+logs/*.log
+logs/*.out
+
 # Scrapy
 .scrapy/
 *.json

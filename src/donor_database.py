@@ -15,7 +15,10 @@ from typing import Dict, List, Optional, Tuple
 import requests
 from bs4 import BeautifulSoup
 
-from .config import DONORS_DATABASE_PATH
+try:
+    from .config import DONORS_DATABASE_PATH
+except ImportError:
+    from config import DONORS_DATABASE_PATH
 
 @dataclass
 class Donor:

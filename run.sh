@@ -19,6 +19,9 @@ source venv/bin/activate
 echo "📚 Installing dependencies..."
 pip install -r requirements.txt
 
+# Install additional dependencies for export features
+pip install fpdf python-docx
+
 # Download spaCy model if not exists
 echo "🧠 Checking spaCy language model..."
 if ! python -c "import spacy; spacy.load('en_core_web_sm')" 2>/dev/null; then

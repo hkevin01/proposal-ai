@@ -1,13 +1,33 @@
 # 🚀 Proposal AI - Enhanced Discovery & Submission System
 
-> **AI-powered proposal discovery from 50+ sources with intelligent resume matching**
-
-This project leverages advanced AI to help researchers, startups, and organizations find, prepare, and submit proposals to funding opportunities worldwide. The system automates discovery from government agencies, academic institutions, private sector, and international organizations while providing intelligent matching based on user profiles.
-
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://python.org)
 [![PyQt5](https://img.shields.io/badge/PyQt5-GUI-green.svg)](https://riverbankcomputing.com/software/pyqt/)
 [![AI Powered](https://img.shields.io/badge/AI-OpenAI%20%2B%20spaCy-orange.svg)](https://openai.com)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/hkevin01/proposal-ai/ci.yml?branch=main)](https://github.com/hkevin01/proposal-ai/actions)
+[![Coverage](https://img.shields.io/codecov/c/github/hkevin01/proposal-ai?style=flat)](https://codecov.io/gh/hkevin01/proposal-ai)
+[![Last Commit](https://img.shields.io/github/last-commit/hkevin01/proposal-ai)](https://github.com/hkevin01/proposal-ai/commits/main)
+[![Phase](https://img.shields.io/badge/Phase-4%20%7C%20Submission%20Automation-blue)](docs/project_plan.md)
+[![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen)](logs/test_output_2025-07-21.txt)
+
+---
+
+## 📝 Recent Changes (July 2025)
+- Donor database fully implemented and tested
+- Iterative phase-based workflow adopted
+- Logs directory added for change logs and test output
+- All test output now saved to `logs/` for review
+- Enhanced error handling and type safety throughout
+- Updated test plan and documentation
+
+## 📂 Logs & Test Output
+- **Change logs:** See `logs/change_log_YYYY-MM-DD.txt` for daily summaries
+- **Test output:** See `logs/test_donor_database_output.txt` and other logs for results
+- **How to run tests:**
+  ```bash
+  python tests/test_donor_database.py
+  cat logs/test_donor_database_output.txt
+  ```
 
 ---
 
