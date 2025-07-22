@@ -27,13 +27,14 @@ def import_from_api(url: str, timeout: Optional[int] = 10) -> List[Dict[str, Any
 
 
 def validate_import_config(config: Dict[str, Any]) -> bool:
-    """
-    Validate import source configuration schema.
-    """
-    required_keys = ["csv_paths", "excel_paths", "api_endpoints"]
-    for key in required_keys:
-        if key not in config or not isinstance(config[key], list):
-            return False
+    """Validate import source config against required schema."""
+    if not isinstance(config, dict):
+        return False
+    for source in config.get("sources", []):
+        required = source.get("schema", {}).get("required_fields", [])
+        for field in required:
+            if field not in source:
+                return False
     return True
 
 

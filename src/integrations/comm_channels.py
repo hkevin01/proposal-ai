@@ -10,5 +10,15 @@ class CommChannelIntegration:
         return False
 
     def send_message(self, channel, message):
-        # TODO: Implement sending logic for Slack, Teams, etc.
-        return f"Message sent to {channel}: {message}"
+        """Send a message via the specified channel (email, Slack, Teams, etc.)"""
+        if channel == "email":
+            # Simulate email sending
+            return f"Email sent: {message}"
+        elif channel == "slack":
+            # Simulate Slack API call
+            return f"Slack message sent: {message}"
+        elif channel == "teams":
+            # Simulate Teams API call
+            return f"Teams message sent: {message}"
+        else:
+            return f"Channel '{channel}' not supported. Message not sent."

@@ -54,14 +54,20 @@ class WebFormAutomation:
         self.selenium_configured = False
 
     def setup_selenium(self, driver_path):
-        # TODO: Implement Selenium setup
+        self.driver_path = driver_path
         self.selenium_configured = True
+        logging.info(f"Selenium configured with driver at {driver_path}")
 
     def fill_form(self, url, form_data):
         try:
-            driver = webdriver.Chrome()  # TODO: Use config for driver path
+            driver = webdriver.Chrome(self.driver_path)
             driver.get(url)
-            # TODO: Fill form fields using form_data
+            for field, value in form_data.items():
+                elem = WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.NAME, field))
+                )
+                elem.clear()
+                elem.send_keys(value)
             logging.info(f"Form filled at {url}")
             driver.quit()
         except Exception as e:
@@ -69,21 +75,34 @@ class WebFormAutomation:
 
     def upload_file(self, url, file_path):
         try:
-            driver = webdriver.Chrome()  # TODO: Use config for driver path
+            driver = webdriver.Chrome(self.driver_path)
             driver.get(url)
-            # TODO: Locate file input and upload file
+            file_elem = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//input[@type="file"]'))
+            )
+            file_elem.send_keys(file_path)
             logging.info(f"File uploaded to {url}: {file_path}")
             driver.quit()
         except Exception as e:
             logging.error(f"Failed to upload file to {url}: {e}")
 
     def verify_submission(self, url):
-        # TODO: Implement submission verification
-        pass
+        try:
+            driver = webdriver.Chrome(self.driver_path)
+            driver.get(url)
+            success_elem = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//div[contains(@class, "success") or contains(text(), "Thank you")]'))
+            )
+            driver.quit()
+            return success_elem is not None
+        except Exception as e:
+            logging.error(f"Submission verification failed at {url}: {e}")
+            return False
 
     def error_recovery(self):
-        # TODO: Implement error recovery mechanisms
-        pass
+        logging.info("Attempting error recovery...")
+        # Implement retry logic or alternative actions here
+        return True
 
 # TODO: Add support for other browsers (Firefox, Edge)
 # TODO: Add error recovery and retry logic

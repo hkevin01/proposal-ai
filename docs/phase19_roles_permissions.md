@@ -10,6 +10,10 @@
 - Permission checks for data import/export
 - Admin-only configuration management
 
+## Integration Notes
+- Use RolesService for permission checks in analytics and import actions
+- Use RealtimeAnalytics to notify dashboard of data changes
+
 ## Usage Example
 ```python
 # Example role check
@@ -17,4 +21,13 @@ if user.role == "admin":
     service.import_external_data(...)
 else:
     raise PermissionError("Only admins can import data.")
+
+from src.services.analytics_service import AnalyticsService
+service = AnalyticsService(user_role="admin")
+service.import_external_data("csv", "data/proposals.csv")  # Allowed
+service.user_role = "viewer"
+try:
+    service.import_external_data("csv", "data/proposals.csv")  # Raises PermissionError
+except PermissionError:
+    print("Permission denied.")
 ```

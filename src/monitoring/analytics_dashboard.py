@@ -5,18 +5,18 @@ Provides insights, statistics, and performance metrics
 
 import json
 import sqlite3
-from collections import Counter, defaultdict
+from collections import Counter
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 import matplotlib.pyplot as plt
-import pandas as pd
 
-from ..core.config import OPPORTUNITIES_DATABASE_PATH, get_config_path
+from ..core.config import OPPORTUNITIES_DATABASE_PATH
 
 
 class ProposalAnalytics:
-    """Analytics engine for opportunity discovery and proposal success tracking"""
+    """Analytics engine for opportunity discovery.
+    """
     
     def __init__(self, db_path: Optional[str] = None):
         self.db_path = db_path or OPPORTUNITIES_DATABASE_PATH
@@ -28,15 +28,21 @@ class ProposalAnalytics:
             cursor = conn.cursor()
             
             # Total opportunities
-            cursor.execute("SELECT COUNT(*) FROM opportunities")
+            cursor.execute(
+                "SELECT COUNT(*) FROM opportunities"
+            )
             total_count = cursor.fetchone()[0]
             
             # Opportunities by source
-            cursor.execute("SELECT source, COUNT(*) FROM opportunities GROUP BY source")
+            cursor.execute(
+                "SELECT source, COUNT(*) FROM opportunities GROUP BY source"
+            )
             by_source = dict(cursor.fetchall())
             
             # Opportunities by category
-            cursor.execute("SELECT category, COUNT(*) FROM opportunities GROUP BY category")
+            cursor.execute(
+                "SELECT category, COUNT(*) FROM opportunities GROUP BY category"
+            )
             by_category = dict(cursor.fetchall())
             
             # Recent opportunities (last 30 days)
@@ -48,12 +54,12 @@ class ProposalAnalytics:
             recent_count = cursor.fetchone()[0]
             
             # Organizations with most opportunities
-            cursor.execute("""
-                SELECT organization, COUNT(*) FROM opportunities 
-                GROUP BY organization 
-                ORDER BY COUNT(*) DESC 
-                LIMIT 10
-            """)
+            cursor.execute(
+                "SELECT organization, COUNT(*) FROM opportunities"
+                " GROUP BY organization"
+                " ORDER BY COUNT(*) DESC"
+                " LIMIT 10"
+            )
             top_organizations = dict(cursor.fetchall())
             
             conn.close()
@@ -109,13 +115,17 @@ class ProposalAnalytics:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
             
-            cursor.execute("SELECT keywords FROM opportunities WHERE keywords != ''")
+            cursor.execute(
+                "SELECT keywords FROM opportunities WHERE keywords != ''"
+            )
             all_keywords = []
             
             for row in cursor.fetchall():
                 if row[0]:
                     keywords = row[0].split(',')
-                    all_keywords.extend([kw.strip().lower() for kw in keywords])
+                    all_keywords.extend(
+                        [kw.strip().lower() for kw in keywords]
+                    )
             
             conn.close()
             
@@ -168,9 +178,15 @@ class ProposalAnalytics:
                 '$1M+': 55
             },
             'largest_opportunities': [
-                {'title': 'Advanced Space Propulsion', 'amount': '$5M', 'org': 'NASA'},
-                {'title': 'AI for Climate Research', 'amount': '$3.2M', 'org': 'NSF'},
-                {'title': 'Quantum Computing Initiative', 'amount': '$2.8M', 'org': 'DOE'}
+                {'title': 'Advanced Space Propulsion',
+                 'amount': '$5M',
+                 'org': 'NASA'},
+                {'title': 'AI for Climate Research',
+                 'amount': '$3.2M',
+                 'org': 'NSF'},
+                {'title': 'Quantum Computing Initiative',
+                 'amount': '$2.8M',
+                 'org': 'DOE'}
             ]
         }
         return sample_funding
@@ -185,9 +201,15 @@ class ProposalAnalytics:
             'success_rate': 0.67,
             'average_match_score': 0.74,
             'top_performing_categories': [
-                {'category': 'Space Technology', 'success_rate': 0.72, 'count': 8},
-                {'category': 'AI Research', 'success_rate': 0.68, 'count': 6},
-                {'category': 'Innovation Challenges', 'success_rate': 0.65, 'count': 4}
+                {'category': 'Space Technology',
+                 'success_rate': 0.72,
+                 'count': 8},
+                {'category': 'AI Research',
+                 'success_rate': 0.68,
+                 'count': 6},
+                {'category': 'Innovation Challenges',
+                 'success_rate': 0.65,
+                 'count': 4}
             ],
             'monthly_activity': {
                 'opportunities_discovered': 89,
@@ -214,7 +236,8 @@ class ProposalAnalytics:
         """Generate personalized recommendations"""
         return [
             "Focus on NASA opportunities - highest success rate (72%)",
-            "Expand profile keywords to include 'quantum computing' and 'cybersecurity'",
+            "Expand profile keywords to include 'quantum computing' and "
+            "'cybersecurity'",
             "Set up alerts for opportunities with $150K+ funding",
             "Consider partnerships for larger ($1M+) opportunities",
             "Submit applications 2+ weeks before deadlines for better success",

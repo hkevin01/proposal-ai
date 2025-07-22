@@ -155,14 +155,21 @@ Create a marketplace for funding opportunities and partnerships to connect users
 - Verified error handling and input validation
 - Confirmed logging and documentation in all modules
 
+## Recent Test Additions
+- Added tests for pie and drill-down chart export in AnalyticsService
+- Validated /analytics/drilldown API endpoint
+- Confirmed documentation and config updates for new analytics features
+
 ## Next Steps
-- Expand test coverage for GUI and API endpoints
-- Add edge case and integration tests
-- Monitor logs for issues and improve error reporting
+- Expand tests for interactive and drill-down analytics
+- Add integration tests for new chart types and endpoints
+- Validate error handling for import and export actions
 
 ## Unit Tests
 - `test_analytics_service.py`: Now includes tests for import features and environment validation.
 - `test_interactive_dashboard.py`: Covers interactive chart rendering (smoke tests).
+- `test_dashboard_data_validation.py`: New test file for dashboard data validation.
+- `test_modular_analytics_service.py`: New test file for modular analytics service methods.
 
 ## Manual Tests
 - Verify GUI filtering and drill-down analytics work as expected.

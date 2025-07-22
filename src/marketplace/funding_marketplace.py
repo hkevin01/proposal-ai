@@ -5,7 +5,13 @@ class FundingMarketplace:
         self.partners = []
 
     def list_opportunities(self):
-        # TODO: Return available funding opportunities
+        """Return available funding opportunities."""
+        # Example: Load from a static list or database
+        if not self.opportunities:
+            self.opportunities = [
+                {"name": "IAC Space Competition", "deadline": "2025-09-01"},
+                {"name": "NASA SBIR", "deadline": "2025-08-15"}
+            ]
         return self.opportunities
 
     def add_opportunity(self, opportunity):
@@ -13,7 +19,12 @@ class FundingMarketplace:
         return True
 
     def list_partners(self):
-        # TODO: Return available partners
+        """Return available partners."""
+        if not self.partners:
+            self.partners = [
+                {"name": "SpaceX", "type": "Industry"},
+                {"name": "ESA", "type": "Agency"}
+            ]
         return self.partners
 
     def add_partner(self, partner):

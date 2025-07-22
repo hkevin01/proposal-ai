@@ -52,6 +52,32 @@ class TestAnalyticsService(unittest.TestCase):
         results = self.service.import_all_sources()
         self.assertIsInstance(results, dict)
 
+    def test_load_external_data_permission(self):
+        service = AnalyticsService(user_role="viewer")
+        try:
+            service.load_external_data("csv", "data/nasa_opportunities.csv")
+        except PermissionError:
+            self.assertTrue(True)
+        else:
+            self.assertTrue(False)
+
+    def test_dashboard_data_validation(self):
+        service = AnalyticsService()
+        valid_data = {
+            "total_proposals": 5,
+            "total_opportunities": 2,
+            "proposal_success_rate": 0.5,
+            "top_opportunities": ["IAC", "NASA"]
+        }
+        self.assertTrue(service._validate_dashboard_data(valid_data))
+        invalid_data = {
+            "total_proposals": 5,
+            "total_opportunities": 2,
+            "proposal_success_rate": 0.5,
+            # Missing 'top_opportunities'
+        }
+        self.assertFalse(service._validate_dashboard_data(invalid_data))
+
 
 if __name__ == "__main__":
     unittest.main()

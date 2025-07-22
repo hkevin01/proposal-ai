@@ -39,5 +39,38 @@
     "Expand profile keywords for better matching",
     "Set up automated monitoring for new NASA opportunities",
     "Consider partnerships for larger funding opportunities"
-  ]
+  ],
+  "charts": [
+    "bar",
+    "line",
+    "pie"
+  ],
+  "export_formats": [
+    "png",
+    "pdf"
+  ],
+  "filters": [
+    "min_proposals",
+    "date_range",
+    "custom_query"
+  ],
+  "api_endpoints": [
+    "/analytics/custom",
+    "/analytics/export"
+  ],
+  "roles": {
+    "admin": [
+      "view",
+      "export",
+      "analytics"
+    ],
+    "editor": [
+      "view",
+      "export",
+      "analytics"
+    ],
+    "viewer": [
+      "view"
+    ]
+  }
 }

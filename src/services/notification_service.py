@@ -24,11 +24,18 @@ class NotificationService:
             msg['Subject'] = subject
             msg['From'] = 'noreply@proposal-ai.com'
             msg['To'] = recipient
-            # TODO: Configure SMTP server
-            # Example: smtp = smtplib.SMTP('localhost')
-            # smtp.sendmail(msg['From'], [recipient], msg.as_string())
-            self.logger.info("Email sent to %s: %s", recipient, subject)
-            return True
+            # SMTP configuration
+            smtp_server = 'localhost'  # Replace with actual SMTP server
+            smtp_port = 25  # Replace with actual port if needed
+            try:
+                smtp = smtplib.SMTP(smtp_server, smtp_port, timeout=10)
+                smtp.sendmail(msg['From'], [recipient], msg.as_string())
+                smtp.quit()
+                self.logger.info("Email sent to %s: %s", recipient, subject)
+                return True
+            except Exception as smtp_err:
+                self.logger.error("SMTP error: %s", smtp_err)
+                return False
         except Exception as e:
             self.logger.error("Error sending email: %s", e)
             return False

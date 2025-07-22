@@ -341,10 +341,10 @@ See details in [docs/phase6_web_mobile.md](docs/phase6_web_mobile.md)
 - [ ] Add usage examples for all new features
 
 ### Phase 17: Advanced Analytics & Visualization
-- [ ] Integrate interactive charts and dashboards (e.g., Plotly, Dash)
-- [ ] Add export options for charts (PNG, PDF)
-- [ ] Enable filtering and drill-down analytics in GUI
-- [ ] Add API endpoints for custom analytics queries
+- [x] Integrate interactive charts and dashboards (e.g., Plotly, Dash)
+- [x] Add export options for charts (PNG, PDF)
+- [x] Enable filtering and drill-down analytics in GUI
+- [x] Add API endpoints for custom analytics queries
 
 ### Phase 18: Data Import & Integration
 - [ ] Support importing opportunities and proposals from external sources (CSV, Excel, APIs)
@@ -395,3 +395,5 @@ See .github/workflows/ci.yml for pipeline configuration.
 - docs/project_plan.md (update phases, checkboxes, suggestions)
 - docs/phase19_roles_permissions.md (new documentation for roles/permissions)
 - .github/workflows/ci.yml (CI/CD integration)
+- src/services/roles_service.py (roles/permissions)
+- src/analytics/realtime_analytics.py (real-time analytics)
